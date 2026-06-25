@@ -128,17 +128,10 @@ class MonitorClient:
             if proxy_arg:
                 logger.info(
                     "Telegram 客户端使用代理: type={}, host={}, port={}",
-                    proxy_arg[0],
-                    proxy_arg[1],
-                    proxy_arg[2],
+                    proxy_arg.get("scheme"),
+                    proxy_arg.get("hostname"),
+                    proxy_arg.get("port"),
                 )
-                # 验证 python-socks 是否安装（Pyrogram v2 asyncio 模式必需）
-                try:
-                    import python_socks  # noqa: F401
-                except ImportError as imp_err:
-                    raise RuntimeError(
-                        "已启用代理但 python-socks 未安装，Pyrogram v2 asyncio 模式需要此库"
-                    ) from imp_err
 
         # 确保会话目录存在（转为绝对路径，避免 Pyrogram 解析到包安装目录）
         session_dir = monitor.session_dir.resolve()
