@@ -252,7 +252,9 @@ class BotCommandHandler:
         try:
             fetched = await self._client.get_messages(channel_id, message_ids=msg_id)
         except Exception as exc:
-            logger.warning("Bot /dl 获取消息失败: channel={}, msg={}, error={}", channel_id, msg_id, exc)
+            logger.warning(
+                "Bot /dl 获取消息失败: channel={}, msg={}, error={}", channel_id, msg_id, exc
+            )
             await message.reply_text(
                 f"❌ 获取消息失败: {exc}",
                 quote=False,
@@ -338,8 +340,7 @@ class BotCommandHandler:
             return
         self._engine.resume()
         await message.reply_text(
-            "▶️ 下载引擎已恢复\n"
-            "✅ 新任务可正常执行",
+            "▶️ 下载引擎已恢复\n✅ 新任务可正常执行",
             quote=False,
         )
 

@@ -128,9 +128,7 @@ class MediaRepository:
 
         async with self._db.session() as session:
             result = await session.execute(
-                select(func.count())
-                .select_from(Media)
-                .where(Media.status == "downloaded")
+                select(func.count()).select_from(Media).where(Media.status == "downloaded")
             )
             return int(result.scalar() or 0)
 
@@ -140,7 +138,8 @@ class MediaRepository:
 
         async with self._db.session() as session:
             result = await session.execute(
-                select(func.coalesce(func.sum(Media.file_size), 0))
-                .where(Media.status == "downloaded")
+                select(func.coalesce(func.sum(Media.file_size), 0)).where(
+                    Media.status == "downloaded"
+                )
             )
             return int(result.scalar() or 0)

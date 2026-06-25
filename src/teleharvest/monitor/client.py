@@ -346,10 +346,7 @@ class MonitorClient:
         )
 
         # 设置 Bot 命令菜单（仅对该用户可见）
-        bot_commands = [
-            BotCommand(command=cmd, description=desc)
-            for cmd, desc in commands
-        ]
+        bot_commands = [BotCommand(command=cmd, description=desc) for cmd, desc in commands]
         try:
             await self._client.set_bot_commands(
                 bot_commands,

@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 from teleharvest.config.schema import (
     AppSettings,
@@ -81,9 +84,7 @@ class TestAppSettings:
         with pytest.raises(ValueError, match="API"):
             AppSettings(api_id=0, api_hash="")
 
-    def test_valid_credentials(
-        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-    ) -> None:
+    def test_valid_credentials(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         """提供有效凭据应成功创建。"""
         monkeypatch.delenv("TELEHARVEST_API_ID", raising=False)
         monkeypatch.delenv("TELEHARVEST_API_HASH", raising=False)
