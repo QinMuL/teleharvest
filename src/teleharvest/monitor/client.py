@@ -132,6 +132,13 @@ class MonitorClient:
                     proxy_arg[1],
                     proxy_arg[2],
                 )
+                # 验证 python-socks 是否安装（Pyrogram v2 asyncio 模式必需）
+                try:
+                    import python_socks  # noqa: F401
+                except ImportError as imp_err:
+                    raise RuntimeError(
+                        "已启用代理但 python-socks 未安装，Pyrogram v2 asyncio 模式需要此库"
+                    ) from imp_err
 
         # 确保会话目录存在（转为绝对路径，避免 Pyrogram 解析到包安装目录）
         session_dir = monitor.session_dir.resolve()
@@ -156,7 +163,28 @@ class MonitorClient:
             in_memory=False,
         )
 
-        await self._client.start()
+        try:
+            await self._client.start()
+        except Exception as exc:
+            # Pyrogram Auth.create() 在连接初始化失败时，except 块调用 connection.close()
+            # 会抛出 AttributeError（protocol 未创建），掩盖真正的连接错误
+            # 遍历异常链记录根因，帮助诊断代理/网络问题
+            root = exc
+            seen: set[int] = set()
+            while (
+                root.__context__ is not None
+                and root.__context__ is not root
+                and id(root) not in seen
+            ):
+                seen.add(id(root))
+                root = root.__context__
+            if root is not exc:
+                logger.error(
+                    "连接失败根因（被 Pyrogram close() AttributeError 掩盖）: {}: {}",
+                    type(root).__name__,
+                    root,
+                )
+            raise
         self._started = True
         me = await self._client.get_me()
         logger.info(
