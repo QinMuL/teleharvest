@@ -52,7 +52,17 @@ fi
 
 echo "[INFO] 数据目录: $DATA_DIR"
 echo "[INFO] 配置目录: $CONFIG_DIR"
-echo "[INFO] 代理状态: ${TELEHARVEST_PROXY__ENABLED:-未启用}"
+
+# 代理状态：优先环境变量，其次 config.yaml
+PROXY_STATUS="未启用"
+if [ "$TELEHARVEST_PROXY__ENABLED" = "true" ]; then
+    PROXY_STATUS="启用（环境变量）"
+elif [ -f "$CONFIG_DIR/config.yaml" ]; then
+    if awk '/^proxy:/{p=1} p&&/enabled:/{print;exit}' "$CONFIG_DIR/config.yaml" 2>/dev/null | grep -qi true; then
+        PROXY_STATUS="启用（config.yaml）"
+    fi
+fi
+echo "[INFO] 代理状态: $PROXY_STATUS"
 echo "=========================================="
 
 # ===== 4. 启动主进程 =====
