@@ -134,7 +134,7 @@ warn_unreachable = true
 files = ["src", "tests"]
 
 [[tool.mypy.overrides]]
-module = ["pyrogram.*", "apscheduler.*"]
+module = ["pyrogram.*", "apscheduler.*", "yaml.*"]
 ignore_missing_imports = true
 
 # ===== pytest 配置 =====
