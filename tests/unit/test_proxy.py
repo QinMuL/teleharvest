@@ -90,18 +90,18 @@ class TestProxyManagerInit:
 class TestToPyrogramProxy:
     """to_pyrogram_proxy 测试。"""
 
-    async def test_returns_tuple_when_enabled(
+    async def test_returns_dict_when_enabled(
         self,
         proxy_manager: ProxyManager,
         primary_proxy: ProxyConfig,
     ) -> None:
-        """启用代理时应返回元组。"""
+        """启用代理时应返回 dict。"""
         proxy_manager._current = primary_proxy
         result = proxy_manager.to_pyrogram_proxy()
         assert result is not None
-        assert result[0] == "socks5"
-        assert result[1] == "127.0.0.1"
-        assert result[2] == 1080
+        assert result["scheme"] == "socks5"
+        assert result["hostname"] == "127.0.0.1"
+        assert result["port"] == 1080
 
     async def test_returns_none_when_direct(self, proxy_manager: ProxyManager) -> None:
         """直连模式时应返回 None。"""
