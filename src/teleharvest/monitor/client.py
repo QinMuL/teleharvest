@@ -169,7 +169,7 @@ class MonitorClient:
             # Pyrogram Auth.create() 在连接初始化失败时，except 块调用 connection.close()
             # 会抛出 AttributeError（protocol 未创建），掩盖真正的连接错误
             # 遍历异常链记录根因，帮助诊断代理/网络问题
-            root = exc
+            root: BaseException = exc
             seen: set[int] = set()
             while (
                 root.__context__ is not None
