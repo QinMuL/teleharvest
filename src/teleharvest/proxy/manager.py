@@ -83,20 +83,22 @@ class ProxyManager:
             self._health_task = None
         logger.info("代理管理器已停止: stats={}", self._stats)
 
-    def to_pyrogram_proxy(self) -> tuple[str, str, int, str | None, str | None] | None:
+    def to_pyrogram_proxy(self) -> tuple[str, str, int] | tuple[str, str, int, str, str] | None:
         """转换为 Pyrogram Client 接受的 proxy 元组格式。
 
         Returns:
-            (scheme, host, port, username, password) 或 None（直连）
+            无认证：(scheme, host, port)
+            有认证：(scheme, host, port, username, password)
+            直连：None
         """
         if not self._current or not self._current.enabled:
             return None
 
         proxy = self._current
-        # Pyrogram 代理格式：(scheme, host, port, username, password)
-        # scheme 取值：socks5 / socks4 / http
         scheme = proxy.type.value
-        return (scheme, proxy.host, proxy.port, proxy.username or None, proxy.password or None)
+        if proxy.username or proxy.password:
+            return (scheme, proxy.host, proxy.port, proxy.username or "", proxy.password or "")
+        return (scheme, proxy.host, proxy.port)
 
     async def failover(self) -> ProxyConfig | None:
         """故障转移：切换到下一个可用代理。
