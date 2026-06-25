@@ -1,0 +1,87 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ===== 虚拟环境 =====
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ===== 测试与覆盖率 =====
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# ===== 类型检查 =====
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== 项目运行时数据（禁止入仓）=====
+data/
+downloads/
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.session
+*.session-journal
+sessions/
+
+# ===== 敏感配置（禁止入仓）=====
+.env
+config/config.yaml
+config/config.local.yaml
+
+# ===== Docker =====
+docker/data/
+docker/config/
+
+# ===== 临时文件 =====
+*.tmp
+*.temp
+*.bak
+*.orig

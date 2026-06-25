@@ -1,0 +1,6 @@
+"""TeleHarvest —— 从 Telegram 频道和群组中监控并下载音视频资源的 Docker 化服务。
+
+快速开始：
+    from teleharvest import __version__
+    print(__version__)
+"""

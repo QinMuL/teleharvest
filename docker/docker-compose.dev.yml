@@ -1,0 +1,43 @@
+# TeleHarvest Docker Compose 开发覆盖文件
+# 使用方式：docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# 与生产配置的差异：
+#   - 使用 dev 构建阶段（含 ruff/mypy/pytest 等开发工具）
+#   - 挂载源代码实现热重载
+#   - 开启调试日志与 SQL 回显
+#   - 不使用资源限制
+#   - 关闭健康检查
+
+services:
+  teleharvest:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: dev  # 使用 dev 阶段，包含开发工具
+
+    # 覆盖命令：以开发模式运行
+    command: ["python", "-m", "teleharvest"]
+
+    environment:
+      TELEHARVEST_LOGGING__LEVEL: "DEBUG"
+      TELEHARVEST_DATABASE__ECHO: "true"
+      # 开发模式禁用自动重连看门狗的频繁检查
+      TELEHARVEST_MONITOR__RECONNECT_INTERVAL: "30"
+      # 优先使用挂载的源代码而非 site-packages 中的安装包
+      PYTHONPATH: "/home/teleharvest/src"
+
+    # 挂载源代码目录，实现代码修改即时生效
+    volumes:
+      - ../data:/home/teleharvest/data
+      - ../config:/home/teleharvest/config
+      - ../src:/home/teleharvest/src:ro
+      - ../tests:/home/teleharvest/tests:ro
+      - ../pyproject.toml:/home/teleharvest/pyproject.toml:ro
+
+    # 开发模式不限制资源
+    deploy:
+      resources: {}
+
+    # 开发模式关闭健康检查
+    healthcheck:
+      disable: true

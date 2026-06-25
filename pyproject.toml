@@ -1,0 +1,188 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teleharvest"
+version = "0.1.0"
+description = "从 Telegram 频道和群组中监控并下载音频与视频资源的 Docker 化服务"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "TeleHarvest Contributors" }
+]
+keywords = ["telegram", "downloader", "media", "docker", "pyrogram"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+dependencies = [
+    "pyrogram>=2.0.106",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "sqlalchemy>=2.0.23",
+    "aiosqlite>=0.19.0",
+    "loguru>=0.7.2",
+    "httpx>=0.25.2",
+    "pysocks>=1.7.1",
+    "apscheduler>=3.10.4",
+    "python-magic>=0.4.27",
+]
+
+[project.optional-dependencies]
+fast = [
+    # TgCrypto 加速 MTProto 加密，需要 C 编译器
+    # 无此依赖时 Pyrogram 回退至纯 Python 实现（pyaes），性能稍差但功能完整
+    "tgcrypto>=1.2.5",
+]
+dev = [
+    "pip-tools>=7.3.0",
+    "pre-commit>=3.6.0",
+    "ruff>=0.1.13",
+    "mypy>=1.8.0",
+    "pytest>=7.4.4",
+    "pytest-asyncio>=0.23.3",
+    "pytest-cov>=4.1.0",
+    "commitizen>=3.13.0",
+    "types-pyyaml>=6.0.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/qinmul/teleharvest"
+Repository = "https://github.com/qinmul/teleharvest"
+Issues = "https://github.com/qinmul/teleharvest/issues"
+
+[project.scripts]
+teleharvest = "teleharvest.main:main"
+
+# ===== setuptools 配置 =====
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+teleharvest = ["py.typed"]
+
+# ===== Ruff 配置 =====
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "N",    # pep8-naming
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",  # 行长由 formatter 处理
+    "B008",  # 函数默认值中的函数调用（FastAPI 依赖注入常用）
+    # 以下规则针对中文全角标点（：，（）！？等）误报，本项目文档与注释为中文，故忽略
+    "RUF001",  # ambiguous-unicode-character-string
+    "RUF002",  # ambiguous-unicode-character-docstring
+    "RUF003",  # ambiguous-unicode-character-comment
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["teleharvest"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+# ===== mypy 配置 =====
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["pyrogram.*", "apscheduler.*"]
+ignore_missing_imports = true
+
+# ===== pytest 配置 =====
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=teleharvest",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+markers = [
+    "unit: 单元测试",
+    "integration: 集成测试（需要外部依赖）",
+    "e2e: 端到端测试",
+    "slow: 耗时较长的测试",
+]
+
+# ===== coverage 配置 =====
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__main__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+
+# ===== commitizen 配置 =====
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = [
+    "pyproject.toml:version",
+    "src/teleharvest/__init__.py:__version__",
+]
+tag_format = "v$version"
+update_changelog_on_bump = true

@@ -1,0 +1,109 @@
+# TeleHarvest 配置文件示例
+# 使用方式：复制此文件为 config.yaml 并按需修改
+#   cp config/config.example.yaml config/config.yaml
+#
+# 配置优先级（从高到低）：
+#   1. 环境变量（前缀 TELEHARVEST_，嵌套用 __ 分隔，如 TELEHARVEST_PROXY__HOST）
+#   2. .env 文件
+#   3. 本文件（config.yaml）
+#   4. 代码默认值
+#
+# 注意：敏感信息（api_id / api_hash / bot_token）请通过 .env 文件或环境变量注入，
+#       不要写在此文件中，避免泄露。
+
+# ===== Telegram API 凭据 =====
+# 强烈建议通过环境变量注入，此处留空
+# api_id: 0
+# api_hash: ""
+# bot_token: ""
+
+# ===== 监控模块 =====
+monitor:
+  # 订阅的频道列表
+  channels:
+    - id: "@example_channel"      # 频道用户名或数字 ID
+      alias: "示例频道"            # 别名（用于存储目录命名）
+      enabled: true
+      # 频道专属过滤规则（不配置则使用 default_filters）
+      filters:
+        types: ["video", "audio"]  # 仅下载视频和音频
+        extensions: ["mp4", "mkv", "mp3", "flac"]  # 扩展名白名单
+        min_size_mb: 1.0           # 最小 1MB
+        max_size_mb: 0             # 0 表示不限
+        keywords: []               # 关键词白名单（任一命中即下载）
+        exclude_keywords: ["广告", "promo"]  # 关键词黑名单
+
+    - id: -1001234567890          # 数字 ID 示例
+      alias: "另一个频道"
+      enabled: true
+      # 不配置 filters，使用 default_filters
+
+  # 全局默认过滤规则
+  default_filters:
+    types: []                      # 空表示接受所有类型
+    extensions: []
+    min_size_mb: 0
+    max_size_mb: 0
+    keywords: []
+    exclude_keywords: []
+
+  # 历史消息回溯条数（0 = 仅监听新消息）
+  history_limit: 0
+
+  # Pyrogram 会话文件目录
+  session_dir: "data/sessions"
+
+# ===== 下载模块 =====
+downloader:
+  max_concurrency: 3              # 最大并发下载数
+  timeout: 3600                   # 单文件下载超时（秒）
+  max_retries: 3                  # 失败重试次数
+  retry_base_delay: 5.0           # 重试间隔基数（秒，指数退避）
+  chunk_size_mb: 10               # 分块大小
+  enable_resume: true             # 启用断点续传
+
+# ===== 存储模块 =====
+storage:
+  root_dir: "data/downloads"      # 存储根目录
+  structure: "by_channel"         # 目录组织：by_channel / by_date / by_type / flat
+  filename_template: "{original_name}"  # 文件名模板
+  enable_dedup: true              # 启用去重
+  dedup_algorithm: "sha256"       # 去重算法
+  retention_days: 0               # 过期清理天数（0 = 不清理）
+  min_free_space_gb: 5.0          # 磁盘空间阈值（GB）
+
+# ===== 代理配置 =====
+proxy:
+  enabled: false                  # 是否启用代理
+  type: "socks5"                  # 类型：socks5 / socks4 / http / https
+  host: "127.0.0.1"
+  port: 1080
+  username: ""                    # 可选
+  password: ""                    # 可选
+  # 备用代理列表（主代理故障时切换）
+  fallback: []
+    # - type: "http"
+    #   host: "backup.proxy.com"
+    #   port: 8080
+  # 健康检查
+  health_check_interval: 300      # 检查间隔（秒）
+  health_check_timeout: 10        # 超时（秒）
+  health_check_target: "149.154.167.51"  # Telegram DC2 IP
+
+# ===== 日志配置 =====
+logging:
+  level: "INFO"                   # TRACE / DEBUG / INFO / WARNING / ERROR / CRITICAL
+  dir: "data/logs"
+  filename: "teleharvest.log"
+  rotation_mb: 50                 # 单文件最大大小
+  retention: 7                    # 保留备份数
+  compression: true               # 压缩归档
+  console: true                   # 控制台输出
+  colorize: true                  # 彩色输出
+
+# ===== 数据库配置 =====
+database:
+  url: "sqlite+aiosqlite:///data/teleharvest.db"
+  pool_size: 5
+  pool_timeout: 30
+  echo: false                     # 是否打印 SQL（调试用）

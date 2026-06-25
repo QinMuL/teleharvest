@@ -1,0 +1,71 @@
+# 版本控制元数据
+.git
+.gitignore
+.github
+
+# Python 缓存与构建产物
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# 测试与覆盖率
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+coverage.xml
+*.cover
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# 文档（镜像中不需要，但保留 README.md 供 wheel 构建）
+docs/
+*.md
+!README.md
+LICENSE
+
+# 开发工具配置
+.pre-commit-config.yaml
+
+# 项目运行时数据（由卷挂载提供）
+data/
+downloads/
+logs/
+*.log
+*.db
+*.sqlite*
+
+# 敏感配置（由环境变量或挂载卷提供）
+.env
+config/config.yaml
+
+# 临时文件
+*.tmp
+*.bak
+
+# 测试代码（镜像中不需要）
+tests/
+
+# CI 临时产物
+*.egg
+.eggs/
