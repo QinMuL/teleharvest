@@ -29,6 +29,8 @@ httpx>=0.25.2
 
 # 代理支持
 pysocks>=1.7.1
+# Pyrogram 异步 SOCKS 代理支持（Pyrogram v2 asyncio 模式必需）
+python-socks[asyncio]>=2.4.4
 
 # 任务调度
 apscheduler>=3.10.4

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "teleharvest"
-version = "0.1.0"
+version = "0.1.1"
 description = "从 Telegram 频道和群组中监控并下载音频与视频资源的 Docker 化服务"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -35,6 +35,7 @@ dependencies = [
     "loguru>=0.7.2",
     "httpx>=0.25.2",
     "pysocks>=1.7.1",
+    "python-socks[asyncio]>=2.4.4",
     "apscheduler>=3.10.4",
     "python-magic>=0.4.27",
 ]
@@ -179,7 +180,7 @@ exclude_lines = [
 # ===== commitizen 配置 =====
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
+version = "0.1.1"
 version_files = [
     "pyproject.toml:version",
     "src/teleharvest/__init__.py:__version__",
